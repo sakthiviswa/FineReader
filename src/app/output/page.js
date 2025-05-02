@@ -35,10 +35,10 @@ export default function output() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-r from-[#e1cfe2] via-[#90caf9] to-[#f48fb1]">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#b2dfdb] via-[#c5cae9] to-[#e1bee7]">
       {/* Header with logo */}
       <header className="flex justify-center py-6">
-        <h1 className="text-3xl font-semibold bg-gradient-to-r from-[#3f51b5] via-[#1e88e5] to-[#8e24aa] text-transparent bg-clip-text transition-transform duration-300 hover:-translate-y-0.5">
+      <h1 className="text-4xl font-bold bg-gradient-to-br from-[#3949ab] to-[#8e24aa] text-transparent bg-clip-text transition-transform duration-300 hover:-translate-y-0.5">
           finereader
         </h1>
       </header>
