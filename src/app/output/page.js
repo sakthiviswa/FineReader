@@ -106,30 +106,30 @@ export default function Output() {
   const [isLoading, setIsLoading] = useState(true);
   const [originalText, setOriginalText] = useState('');
   const [summary, setSummary] = useState('');
-  
+
   const [editInput, setEditInput] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [theme, setTheme] = useState('default');
-  
+
   // Client-side only state for animations
   const [isAnimating, setIsAnimating] = useState(false);
   const [isClient, setIsClient] = useState(false);
-  
+
   // Set isClient to true only on the client side
   useEffect(() => {
     setIsClient(true);
     setIsAnimating(true);
   }, []);
-  
+
   const currentTheme = themeColors[theme];
-  
+
   const cycleTheme = () => {
     const themes = Object.keys(themeColors);
     const currentIndex = themes.indexOf(theme);
     const nextIndex = (currentIndex + 1) % themes.length;
     setTheme(themes[nextIndex]);
   };
-  
+
   function getParticleColor(index) {
     const colors = ['#6366f1', '#a855f7', '#3b82f6', '#d946ef', '#8b5cf6', '#0ea5e9'];
     return colors[index % colors.length];
@@ -216,21 +216,21 @@ export default function Output() {
   };
 
   return (
-    <div className={` ${urbanist.className}flex flex-col min-h-screen bg-gradient-to-br ${currentTheme.gradientFrom} ${currentTheme.gradientVia} ${currentTheme.gradientTo}`}>
+    <div className={`${urbanist.className} flex flex-col min-h-screen bg-gradient-to-br ${currentTheme.gradientFrom} ${currentTheme.gradientVia} ${currentTheme.gradientTo}`}>
       {/* Header */}
-      <header className="flex justify-center py-6">
-        <h1 className={`${lemonada.className} text-4xl font-bold bg-gradient-to-br ${currentTheme.titleFrom} ${currentTheme.titleTo} text-transparent bg-clip-text transition-transform duration-300 hover:-translate-y-0.5`}>
+      <header className="flex justify-center py-4 md:py-6 px-2 md:px-0">
+        <h1 className={`${lemonada.className} text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-br ${currentTheme.titleFrom} ${currentTheme.titleTo} text-transparent bg-clip-text transition-transform duration-300 hover:-translate-y-0.5`}>
           FineReader
         </h1>
       </header>
 
-      <main className="flex-grow flex justify-center px-4">
-        <div className="w-full max-w-4xl bg-white rounded-3xl shadow-lg p-8 flex flex-col">
-          <div className="mb-6 flex justify-between items-center">
-            <h2 className="text-2xl font-semibold text-gray-800 ml-82">Your Summary</h2>
-            
+      <main className="flex-grow flex justify-center px-2 sm:px-4">
+        <div className="w-full max-w-full sm:max-w-3xl md:max-w-4xl bg-white rounded-3xl shadow-lg p-4 sm:p-6 md:p-8 flex flex-col">
+          <div className="mb-4 sm:mb-6 flex flex-row sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-800">Your Summary</h2>
+
             {/* Clear button */}
-            <button 
+            <button
               onClick={handleClear}
               className={`${currentTheme.button} text-white py-2 px-4 rounded-lg transition-colors flex items-center gap-2`}
             >
@@ -242,11 +242,11 @@ export default function Output() {
           </div>
           <div className="w-20 h-1 bg-pink-200 mx-auto mb-6"></div>
           <div className="flex-grow flex flex-col items-center justify-center">
-            <div className="text-gray-700 text-left w-full min-h-[200px] p-4 rounded-lg border border-gray-100 relative overflow-hidden">
+            <div className="w-full h-auto min-h-[200px] p-4 rounded-lg border border-gray-100 relative overflow-hidden">
               {isLoading ? (
-                <div className="relative w-full h-[300px] rounded-2xl">
+                <div className="relative w-full h-[250px] sm:h-[300px] rounded-2xl">
                   {/* Outer gradient border with animation */}
-                  <div 
+                  <div
                     className={`absolute inset-0 rounded-2xl bg-gradient-to-br from-[#e1cfe2] via-[#90caf9] to-[#f48fb1] opacity-50 ${isClient && isAnimating ? 'animate-pulse' : ''}`}
                     style={{ animationDuration: '2s' }}
                   ></div>
@@ -327,8 +327,8 @@ export default function Output() {
                               opacity: 0.8,
                               top: particle.top,
                               left: particle.left,
-                              animation: isAnimating ? 
-                                `${particle.isHorizontal ? 'orbitHorizontal' : 'orbitVertical'} ${particle.duration}s linear infinite` 
+                              animation: isAnimating ?
+                                `${particle.isHorizontal ? 'orbitHorizontal' : 'orbitVertical'} ${particle.duration}s linear infinite`
                                 : 'none',
                               animationDelay: `${particle.delay}s`,
                               transform: 'translate(-50%, -50%)'
@@ -350,16 +350,16 @@ export default function Output() {
               ) : originalText || summary ? (
                 <>
                   <div className="mb-4">
-                    <h3 className="text-lg font-semibold text-purple-600">Original Text:</h3>
-                    <p className="whitespace-pre-wrap text-gray-800">{originalText}</p>
+                    <h3 className="text-base sm:text-lg font-semibold text-purple-600">Original Text:</h3>
+                    <p className="whitespace-pre-wrap text-gray-800 text-sm sm:text-base">{originalText}</p>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-pink-600">Summary:</h3>
-                    <p className="whitespace-pre-wrap text-gray-800">{summary}</p>
+                    <h3 className="text-base sm:text-lg font-semibold text-pink-600">Summary:</h3>
+                    <p className="whitespace-pre-wrap text-gray-800 text-sm sm:text-base">{summary}</p>
                   </div>
                 </>
               ) : (
-                <div className="flex flex-col items-center justify-center h-full py-8 text-center text-gray-500">
+                <div className="flex flex-col items-center justify-center h-full py-6 text-center text-gray-500 text-sm sm:text-base">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12 mb-3 text-gray-300">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                   </svg>
@@ -373,12 +373,13 @@ export default function Output() {
       </main>
 
       {/* Edit input */}
-      <div className="flex justify-center py-4 px-4">
-        <div className="w-full max-w-xl relative">
+      <div className="flex justify-center py-4 px-2 sm:px-4">
+        <div className="w-full max-w-full sm:max-w-xl relative">
+
           <input
             type="text"
             placeholder="Edit with AI"
-            className="w-full py-3 px-5 rounded-full border-0 bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-purple-300"
+            className="w-full py-2 sm:py-3 px-4 sm:px-5 rounded-full border-0 bg-white shadow-md focus:outline-none focus:ring-2 focus:ring-purple-300 text-sm sm:text-base"
             value={editInput}
             onChange={(e) => setEditInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleEdit()}
@@ -403,9 +404,9 @@ export default function Output() {
       </div>
 
       {/* Navigation + Theme Toggle */}
-      <div className="absolute top-6 left-6 flex flex-row items-center justify-between gap-4">
+      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 flex flex-row items-center justify-between gap-2 sm:gap-4">
         <button
-          className="bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-gray-50 transition-colors"
+          className="bg-white w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shadow-md hover:bg-gray-50 transition-colors"
           onClick={handleGoBack}
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-600">
@@ -416,7 +417,7 @@ export default function Output() {
         {/* Theme toggle button */}
         <button
           onClick={cycleTheme}
-          className="bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-shadow"
+          className="bg-white w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-shadow"
           aria-label="Change theme"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-600">
@@ -424,7 +425,7 @@ export default function Output() {
           </svg>
         </button>
       </div>
-      
+
       {/* Styles for animations */}
       <style jsx>
         {`
