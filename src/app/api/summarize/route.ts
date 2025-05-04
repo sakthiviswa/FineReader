@@ -1,37 +1,53 @@
-// app/api/summarize/route.ts
-
+// app/api/summary/route.js
 import { NextResponse } from 'next/server';
 
-export async function POST(req: Request) {
-  const { text } = await req.json();
+interface SummarizeRequestBody {
+  text: string; // Adjust the type based on the expected structure of the request body
+}
 
-  if (!text) {
-    return NextResponse.json({ error: 'No input provided' }, { status: 400 });
-  }
+interface SummarizeResponseBody {
+  summary: string; // Adjust the type based on the expected structure of the response body
+}
 
+export async function POST(request: Request): Promise<NextResponse> {
   try {
-    const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+    const body: SummarizeRequestBody = await request.json();
+    
+    // Forward the request to your actual backend API
+    const response: Response = await fetch('http://127.0.0.1:8000/summarize', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        model: 'gpt-4',
-        messages: [
-          { role: 'system', content: 'You are a helpful summarizer.' },
-          { role: 'user', content: `Summarize this text:\n\n${text}` }
-        ],
-        temperature: 0.5
-      })
+      body: JSON.stringify(body),
     });
 
-    const data = await openaiRes.json();
-    const summary = data.choices?.[0]?.message?.content || 'No summary generated';
+    if (!response.ok) {
+      // If the backend returns an error, pass it through
+      const errorData: string = await response.text();
+      return new NextResponse(
+        JSON.stringify({ error: `Backend error: ${errorData}` }),
+        {
+          status: response.status,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    }
 
-    return NextResponse.json({ summary });
-  } catch (err) {
-    console.error('API error:', err);
-    return NextResponse.json({ error: 'Failed to summarize' }, { status: 500 });
+    // Get the response data
+    const data: SummarizeResponseBody = await response.json();
+    
+    // Return the successful response
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Error in API route:', error);
+    
+    // Return a proper error response
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

@@ -6,8 +6,12 @@ import dynamic from 'next/dynamic';
 import { loadSlim } from "tsparticles-slim";
 import type { Engine } from "tsparticles-engine";
 import { useRouter } from 'next/navigation';
+import { Lemonada } from 'next/font/google';
+
 
 const urbanist = Urbanist({ subsets: ['latin'] });
+const lemonada = Lemonada({ subsets: ['latin'], weight: ['400', '600'] });
+
 
 const Particles = dynamic(() => import('react-particles').then((mod) => mod.default), {
   ssr: false,
@@ -17,40 +21,59 @@ const Particles = dynamic(() => import('react-particles').then((mod) => mod.defa
 export default function Page() {
   const router = useRouter();
   const [inputValue, setInputValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const particlesInit = useCallback(async (engine: Engine) => {
     await loadSlim(engine);
   }, []);
 
-  const handlegenerator = async () => {
+  const handleGenerator = async () => {
     if (!inputValue.trim()) return;
 
     try {
+      setIsLoading(true);
       console.log("Generating summary for:", inputValue);
 
-      const response = await fetch('/api/summary', {
+      // For Next.js applications, use a proxy through your own API route
+      // This will avoid CORS issues with direct browser-to-API calls
+      const response = await fetch('/api/summarize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: inputValue }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch summary');
+        throw new Error(`Failed to fetch summary: ${response.status}`);
       }
 
       const result = await response.json();
-      console.log('Summary:', result);
 
-      // You can store the result in localStorage, context, or pass as query
-      localStorage.setItem('summaryResult', JSON.stringify(result));
+      localStorage.setItem(
+        'summaryResult',
+        JSON.stringify({
+          originalText: inputValue,
+          summary: result.summary || result.data?.summary || result,
+        })
+      );
 
+
+      // Store the result in localStorage to access it on the output page
+      localStorage.setItem(
+        'summaryResult',
+        JSON.stringify({
+          originalText: inputValue,
+          summary: result.summary || result.data?.summary || result,
+        })
+      );
       router.push('/output');
+      
     } catch (error) {
       console.error('Error generating summary:', error);
       alert("Failed to generate summary. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
-
 
   return (
     <main
@@ -58,16 +81,15 @@ export default function Page() {
     >
       {/* Navigation bar */}
       <div className="flex flex-row items-center justify-between p-5 z-10 relative">
-        <h1 className="text-4xl font-bold bg-gradient-to-br from-[#3949ab] to-[#8e24aa] text-transparent bg-clip-text transition-transform duration-300 hover:-translate-y-0.5">
-          finereader
+        <h1 className={` ${lemonada.className} text-4xl font-bold bg-gradient-to-br from-[#3949ab] to-[#8e24aa] text-transparent bg-clip-text transition-transform duration-300 hover:-translate-y-0.5`}>
+          FineReader
         </h1>
         <button className="px-6 py-3 bg-gradient-to-br from-[#e3f2fd] via-[#fce4ec] to-[#f3e5f5]
   text-gray-800 font-medium rounded-2xl shadow-md border border-transparent 
   transition-all duration-300 hover:bg-[#fce4ec] hover:from-[#fce4ec] hover:via-[#fce4ec] hover:to-[#fce4ec] 
-  hover:border-[#ec407a]   hover:shadow-lg active:translate-y-0 active:shadow-md">
+  hover:border-[#ec407a]   hover:shadow-lg active:translate-y-0 active:shadow-md" onClick={() => router.push('/output')}>
           Get started
         </button>
-
       </div>
 
       {/* Translucent Circle Background + Particles */}
@@ -110,21 +132,21 @@ export default function Page() {
 
         {/* Headline section */}
         <div className="flex flex-col items-center px-4 md:px-8 max-w-4xl mx-auto text-center mt-6 mb-12 text-gray-500">
-        <div className='flex flex-row items-start mb-2 self-start'>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                summarize the 
-              </h2>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 ml-3 bg-gradient-to-br from-[#3949ab] to-[#8e24aa] text-transparent bg-clip-text  ">
-                 world's knowledge
-              </h2>
+          <div className='flex flex-row items-start mb-2 self-start'>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              summarize the 
+            </h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 ml-3 bg-gradient-to-br from-[#3949ab] to-[#8e24aa] text-transparent bg-clip-text  ">
+               world's knowledge
+            </h2>
           </div>
           <div className='flex flex-row items-start mb-6'>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                with the 
-              </h2>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 ml-3 bg-gradient-to-br from-[#3949ab] to-[#8e24aa] text-transparent bg-clip-text  ">
-                 click of a button.
-              </h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              with the 
+            </h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 ml-3 bg-gradient-to-br from-[#3949ab] to-[#8e24aa] text-transparent bg-clip-text  ">
+               click of a button.
+            </h2>
           </div>
           <p className="text-lg text-gray-900 max-w-2xl">
             Get instant summaries of articles, research papers, and documents. Save time and extract key insights efficiently.
@@ -137,9 +159,9 @@ export default function Page() {
             <input
               type="text"
               className="w-full h-16 p-5 pl-12 text-lg rounded-xl bg-white text-gray-800 shadow-lg border-2 border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-200 transition-all"
-              placeholder="Fine dining menu with glossy glass bubbles..."
+              placeholder="Paste your text to summarize..."
               value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => setInputValue(e.target.value)}
             />
             {/* Star icon in input */}
             <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
@@ -149,14 +171,15 @@ export default function Page() {
             </div>
             {/* Generate button */}
             <button
-      className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-gradient-to-br from-[#e3f2fd] via-[#fce4ec] to-[#f3e5f5]
-      text-gray-800 font-medium rounded-2xl shadow-md border border-transparent 
-      transition-all duration-300 hover:bg-[#fce4ec] hover:from-[#fce4ec] hover:via-[#fce4ec] hover:to-[#fce4ec] 
-      hover:border-[#ec407a]  hover:shadow-lg  active:shadow-md"
-      onClick={handlegenerator}
-    >
-      Generate →
-    </button>
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-gradient-to-br from-[#e3f2fd] via-[#fce4ec] to-[#f3e5f5]
+              text-gray-800 font-medium rounded-2xl shadow-md border border-transparent 
+              transition-all duration-300 hover:bg-[#fce4ec] hover:from-[#fce4ec] hover:via-[#fce4ec] hover:to-[#fce4ec] 
+              hover:border-[#ec407a] hover:shadow-lg active:shadow-md"
+              onClick={handleGenerator}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Generating...' : 'Generate →'}
+            </button>
             {/* Gradient border effect */}
             <div className="absolute inset-0 rounded-xl p-0.5 -z-10 bg-gradient-to-r from-[#f9e8fb] via-[#e1f5fe] to-[#fce4ec] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </div>
@@ -202,8 +225,6 @@ export default function Page() {
             </div>
           ))}
         </div>
-
-        
       </div>
       
       {/* Footer */}
