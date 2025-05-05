@@ -102,7 +102,6 @@ const particleData = [
 
 export default function Output() {
   const router = useRouter();
-  const [content, setContent] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [originalText, setOriginalText] = useState('');
   const [summary, setSummary] = useState('');
@@ -351,11 +350,11 @@ export default function Output() {
                 <>
                   <div className="mb-4">
                     <h3 className="text-base sm:text-lg font-semibold text-purple-600">Original Text:</h3>
-                    <p className="whitespace-pre-wrap text-gray-800 text-sm sm:text-base">{originalText}</p>
+                    <p className="whitespace-pre-wrap text-gray-800 text-sm sm:text-lg font-medium">{originalText}</p>
                   </div>
                   <div>
                     <h3 className="text-base sm:text-lg font-semibold text-pink-600">Summary:</h3>
-                    <p className="whitespace-pre-wrap text-gray-800 text-sm sm:text-base">{summary}</p>
+                    <p className="whitespace-pre-wrap text-gray-800 text-sm sm:text-lg font-medium">{summary}</p>
                   </div>
                 </>
               ) : (

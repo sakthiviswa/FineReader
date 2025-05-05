@@ -110,7 +110,7 @@ export default function Page() {
             },
             color: { value: "#ffffff" },
             opacity: { value: 0.4, random: false },
-            size: { value: 4, random: true },
+            size: { value: 8, random: true },
             move: {
               enable: true,
               speed: 1,
@@ -142,7 +142,7 @@ export default function Page() {
             summarize the 
           </h2>
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1 sm:mb-2 pb-2 sm:ml-3 bg-gradient-to-br from-[#3949ab] to-[#8e24aa] text-transparent bg-clip-text">
-            world's knowledge
+           {"world's knowledge"}
           </h2>
         </div>
         <div className='flex flex-col sm:flex-row items-center sm:items-start mb-4 sm:mb-6 self-center '>
