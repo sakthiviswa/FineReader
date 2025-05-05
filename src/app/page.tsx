@@ -1,10 +1,9 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { Urbanist } from 'next/font/google';
-import dynamic from 'next/dynamic';
-import { loadSlim } from "tsparticles-slim";
-import type { Engine } from "tsparticles-engine";
+
+
 import { useRouter } from 'next/navigation';
 import { Lemonada } from 'next/font/google';
 
@@ -13,19 +12,14 @@ const urbanist = Urbanist({ subsets: ['latin'] });
 const lemonada = Lemonada({ subsets: ['latin'], weight: ['400', '600'] });
 
 
-const Particles = dynamic(() => import('react-particles').then((mod) => mod.default), {
-  ssr: false,
-  loading: () => <div className="w-full h-full bg-transparent" />
-});
+
 
 export default function Page() {
   const router = useRouter();
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const particlesInit = useCallback(async (engine: Engine) => {
-    await loadSlim(engine);
-  }, []);
+
 
   const handleGenerator = async () => {
     if (!inputValue.trim()) return;
@@ -96,35 +90,7 @@ export default function Page() {
 
     {/* Translucent Circle Background + Particles */}
     <div className="absolute w-full h-full rounded-tl-full rounded-tr-full bg-white/15 shadow-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-2/5 z-0 backdrop-blur-sm border border-white/10 pointer-events-none">
-      <Particles
-        id="tsparticles"
-        init={particlesInit}
-        options={{
-          fullScreen: { enable: false },
-          background: { color: { value: 'transparent' } },
-          fpsLimit: 60,
-          particles: {
-            number: { 
-              value: 30, 
-              density: { enable: true, value_area: 800 } 
-            },
-            color: { value: "#ffffff" },
-            opacity: { value: 0.4, random: false },
-            size: { value: 8, random: true },
-            move: {
-              enable: true,
-              speed: 1,
-              direction: "none",
-              random: true,
-              straight: false,
-              outMode: "out",
-              bounce: false,
-            },
-          },
-          detectRetina: true,
-        }}
-        className="absolute w-full h-full"
-      />
+      
     </div>
 
     {/* Main content */}
